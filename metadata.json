@@ -1,0 +1,6 @@
+{
+  "name": "NAVACO - Dịch Vụ Kỹ Thuật Cảng Biển & Công Nghiệp",
+  "description": "Website giới thiệu năng lực kỹ thuật, bảo trì trọn gói (FCM), nâng cấp retrofit cẩu cảng STS/RTG, phụ tùng chính hãng và giải pháp năng lượng cảng biển của NAVACO tại Việt Nam và Cambodia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

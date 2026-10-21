@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --navaco-red: #D6011E;
+    --navaco-red-dark: #B00018;
+    --navaco-graphite: #42454A;
+    --navaco-graphite-dark: #2C2F33;
+    --navaco-bg: #F7F7F5;
+    --font-display: 'Barlow Semi Condensed', sans-serif;
+    --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    background-color: #F7F7F5;
+    color: #1E2022;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+.font-display {
+  font-family: 'Barlow Semi Condensed', sans-serif;
+}
+
+.font-sans {
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+}
+
+.font-mono-tabular {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* N-slash Diagonal Motif from NAVACO Logo */
+.navaco-slash-right {
+  clip-path: polygon(0 0, 100% 0, 94% 100%, 0% 100%);
+}
+
+.navaco-slash-left {
+  clip-path: polygon(4% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.navaco-slash-bottom {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+}
+
+.navaco-card-corner {
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+}
+
+/* Custom subtle scrollbars for horizontal equipment strip */
+.no-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+.no-scrollbar::-webkit-scrollbar-track {
+  background: #E6E6E2;
+}
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background: #42454A;
+}
+.no-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #D6011E;
+}
