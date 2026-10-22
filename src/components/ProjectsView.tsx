@@ -9,6 +9,7 @@ import {
 import { filterProjects } from '../utils/navacoLogic';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { QuoteRequestForm } from './QuoteRequestForm';
+import { ProjectFieldVisual } from './IndustrialVisuals';
 import {
   ArrowRight,
   CheckCircle2,
@@ -177,38 +178,42 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     key={proj.id}
                     type="button"
                     onClick={() => onSelectProject(proj.id)}
-                    className={`text-left flex flex-col justify-between transition-colors cursor-pointer border-2 ${
+                    className={`group text-left flex flex-col justify-between transition-colors cursor-pointer border-2 overflow-hidden ${
                       isSelected
                         ? 'bg-white border-[#D6011E]'
                         : 'bg-white border-[#D8D8D2] hover:border-[#42454A]'
                     }`}
                   >
-                    <div className="p-6">
-                      <div className="flex items-center justify-between text-xs font-mono-tabular text-[#6B7078] mb-2">
-                        <span className="text-[#D6011E] font-bold">
-                          {proj.countryLabel[lang]}
-                        </span>
-                        <span>{proj.serviceTag[lang]}</span>
+                    {/* Project Image Header */}
+                    <div className="relative w-full h-48 overflow-hidden bg-[#2C2F33]">
+                      <ProjectFieldVisual projectId={proj.id} />
+                      <div className="absolute top-3 left-3 bg-[#1E2022]/90 text-white text-[11px] font-mono-tabular px-2.5 py-1 border-l-2 border-[#D6011E]">
+                        <span className="text-[#D6011E] font-bold mr-1.5">{proj.countryLabel[lang]}</span>
+                        <span className="text-[#D8D8D2]">· {proj.serviceTag[lang]}</span>
                       </div>
+                    </div>
 
-                      <h3 className="font-display text-xl font-bold uppercase text-[#1E2022]">
-                        {proj.title[lang]}
-                      </h3>
+                    <div className="p-6 flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="text-xs font-mono-tabular text-[#6B7078] mb-1.5">
+                          {proj.client[lang]} · {proj.equipmentUsed[lang]}
+                        </div>
 
-                      <p className="text-xs font-mono-tabular text-[#42454A] mt-2">
-                        {proj.client[lang]} · {proj.equipmentUsed[lang]}
-                      </p>
+                        <h3 className="font-display text-xl font-bold uppercase text-[#1E2022] group-hover:text-[#D6011E] transition-colors leading-snug">
+                          {proj.title[lang]}
+                        </h3>
 
-                      <p className="text-sm text-[#42454A] mt-3 line-clamp-3 leading-relaxed">
-                        {proj.summary[lang]}
-                      </p>
+                        <p className="text-sm text-[#42454A] mt-3 line-clamp-3 leading-relaxed">
+                          {proj.summary[lang]}
+                        </p>
+                      </div>
                     </div>
 
                     <div
                       className={`w-full px-6 py-3 border-t text-xs font-display font-bold uppercase tracking-wider flex items-center justify-between ${
                         isSelected
                           ? 'bg-[#D6011E] text-white border-[#D6011E]'
-                          : 'bg-[#F7F7F5] text-[#1E2022] border-[#E6E6E0]'
+                          : 'bg-[#F7F7F5] text-[#1E2022] border-[#E6E6E0] group-hover:bg-[#42454A] group-hover:text-white'
                       }`}
                     >
                       <span>

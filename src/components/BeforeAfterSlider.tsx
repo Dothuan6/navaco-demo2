@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Language, ProjectItem } from '../data/navacoData';
 import { MoveHorizontal } from 'lucide-react';
 
@@ -10,12 +10,41 @@ interface BeforeAfterSliderProps {
 /**
  * Interactive Before/After Same-Angle Comparison Slider per Brief Section 4d:
  * "Trước / Sau dùng thanh kéo so sánh 2 ảnh cùng góc"
+ *
+ * Symmetrical visibility logic:
+ * - When in "Xem Trước" mode (sliderPos <= 35), the After info box is hidden.
+ * - When in "Xem Sau" mode (sliderPos >= 65), the Before info box is hidden.
+ * - When in 50/50 mode, both info boxes stay on their respective halves.
  */
 export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
   project,
   lang,
 }) => {
+  // sliderPos represents the percentage of the AFTER view (0 = 100% Before, 100 = 100% After)
   const [sliderPos, setSliderPos] = useState<number>(50);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isPointerDown, setIsPointerDown] = useState<boolean>(false);
+
+  // Before view width percentage
+  const beforePercent = Math.max(0, Math.min(100, 100 - sliderPos));
+  const afterPercent = Math.max(0, Math.min(100, sliderPos));
+
+  // Symmetrical info box visibility:
+  // When mostly/fully viewing Before (sliderPos < 40), hide the After info box.
+  // When mostly/fully viewing After (sliderPos > 60), hide the Before info box.
+  const showBeforeInfo = sliderPos <= 60;
+  const showAfterInfo = sliderPos >= 40;
+
+  const handlePointerMove = (clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const rawRatio = Math.max(0, Math.min(1, x / rect.width));
+    // Since x goes from left (0) to right (1), at x=0 beforePercent=0 -> sliderPos=100.
+    // At x=1 beforePercent=100 -> sliderPos=0.
+    const newAfterPercent = Math.round((1 - rawRatio) * 100);
+    setSliderPos(newAfterPercent);
+  };
 
   return (
     <div className="bg-white border border-[#D8D8D2] p-6">
@@ -33,20 +62,50 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
           </h3>
         </div>
         <div className="flex items-center gap-2 text-xs font-mono-tabular text-[#42454A]">
-          <span>{lang === 'vi' ? 'Trước:' : 'Before:'} {100 - sliderPos}%</span>
+          <span className={beforePercent > 50 ? 'font-bold text-[#1E2022]' : ''}>
+            {lang === 'vi' ? 'Trước:' : 'Before:'} {beforePercent}%
+          </span>
           <span>·</span>
-          <span>{lang === 'vi' ? 'Sau:' : 'After:'} {sliderPos}%</span>
+          <span className={afterPercent > 50 ? 'font-bold text-[#D6011E]' : ''}>
+            {lang === 'vi' ? 'Sau:' : 'After:'} {afterPercent}%
+          </span>
         </div>
       </div>
 
-      {/* Same-angle interactive viewport */}
-      <div className="relative w-full h-80 md:h-96 overflow-hidden border border-[#42454A] select-none bg-[#2C2F33]">
-        {/* AFTER LAYER (Full width underneath) */}
-        <div className="absolute inset-0 bg-[#1E242B] text-white p-6 flex flex-col justify-between">
+      {/* Same-angle interactive viewport with direct click & drag support */}
+      <div
+        ref={containerRef}
+        onPointerDown={(e) => {
+          setIsPointerDown(true);
+          handlePointerMove(e.clientX);
+          (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+        }}
+        onPointerMove={(e) => {
+          if (isPointerDown) {
+            handlePointerMove(e.clientX);
+          }
+        }}
+        onPointerUp={(e) => {
+          setIsPointerDown(false);
+          try {
+            (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+          } catch {
+            // ignore
+          }
+        }}
+        className="relative w-full h-80 md:h-96 overflow-hidden border border-[#42454A] select-none bg-[#2C2F33] cursor-ew-resize"
+      >
+        {/* AFTER LAYER (Clipped to the right portion: from beforePercent to 100%) */}
+        <div
+          className="absolute inset-0 bg-[#1E242B] text-white p-6 flex flex-col justify-between overflow-hidden"
+          style={{
+            clipPath: `polygon(${beforePercent}% 0, 100% 0, 100% 100%, ${beforePercent}% 100%)`,
+          }}
+        >
           {/* Technical SVG diagram representing the modernized AFTER state */}
           <svg
             viewBox="0 0 800 320"
-            className="absolute inset-0 w-full h-full opacity-90"
+            className="absolute inset-0 w-full h-full opacity-90 pointer-events-none"
             preserveAspectRatio="xMidYMid slice"
           >
             <rect width="800" height="320" fill="#1E252D" />
@@ -82,37 +141,45 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             </text>
           </svg>
 
-          <div className="relative z-10 flex justify-end">
+          {/* Top Label */}
+          <div
+            className={`relative z-10 flex justify-end transition-opacity duration-200 ${
+              sliderPos >= 15 ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
             <span className="px-3 py-1 bg-[#D6011E] text-white text-xs font-mono-tabular uppercase font-semibold">
               {project.afterState.label[lang]}
             </span>
           </div>
 
-          <div className="relative z-10 bg-[#1E2022]/90 border border-white/20 p-4 max-w-md ml-auto">
-            <p className="text-xs font-mono-tabular text-[#E6E6E0] mb-2">
-              {project.afterState.visualNote[lang]}
-            </p>
-            <ul className="space-y-1 text-xs text-white">
-              {project.afterState.metrics.map((m, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-[#D6011E] shrink-0" />
-                  <span>{m[lang]}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* AFTER INFO BOX: Hidden when viewing Before */}
+          {showAfterInfo && (
+            <div className="relative z-10 bg-[#1E2022]/95 border border-white/20 p-4 max-w-sm sm:max-w-md ml-auto shadow-lg animate-fadeIn">
+              <p className="text-xs font-mono-tabular text-[#E6E6E0] mb-2 font-medium">
+                {project.afterState.visualNote[lang]}
+              </p>
+              <ul className="space-y-1 text-xs text-white">
+                {project.afterState.metrics.map((m, idx) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-[#D6011E] shrink-0" />
+                    <span>{m[lang]}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
-        {/* BEFORE LAYER (Clipped from left to 100 - sliderPos) */}
+        {/* BEFORE LAYER (Clipped to the left portion: from 0% to beforePercent) */}
         <div
           className="absolute inset-0 bg-[#3A3835] text-white p-6 flex flex-col justify-between overflow-hidden"
           style={{
-            clipPath: `polygon(0 0, ${100 - sliderPos}% 0, ${100 - sliderPos}% 100%, 0 100%)`,
+            clipPath: `polygon(0 0, ${beforePercent}% 0, ${beforePercent}% 100%, 0 100%)`,
           }}
         >
           <svg
             viewBox="0 0 800 320"
-            className="absolute inset-0 w-full h-full opacity-90"
+            className="absolute inset-0 w-full h-full opacity-90 pointer-events-none"
             preserveAspectRatio="xMidYMid slice"
           >
             <rect width="800" height="320" fill="#353330" />
@@ -145,74 +212,104 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             </text>
           </svg>
 
-          <div className="relative z-10 flex justify-start">
+          {/* Top Label */}
+          <div
+            className={`relative z-10 flex justify-start transition-opacity duration-200 ${
+              sliderPos <= 85 ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
             <span className="px-3 py-1 bg-[#42454A] text-white text-xs font-mono-tabular uppercase font-semibold border border-white/30">
               {project.beforeState.label[lang]}
             </span>
           </div>
 
-          <div className="relative z-10 bg-[#2C2F33]/95 border border-white/20 p-4 max-w-md">
-            <p className="text-xs font-mono-tabular text-[#D8D8D2] mb-2">
-              {project.beforeState.visualNote[lang]}
-            </p>
-            <ul className="space-y-1 text-xs text-[#E6E6E0]">
-              {project.beforeState.metrics.map((m, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-[#9EA3AA] shrink-0" />
-                  <span>{m[lang]}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* BEFORE INFO BOX: Hidden when viewing After */}
+          {showBeforeInfo && (
+            <div className="relative z-10 bg-[#2C2F33]/95 border border-white/20 p-4 max-w-sm sm:max-w-md shadow-lg animate-fadeIn">
+              <p className="text-xs font-mono-tabular text-[#D8D8D2] mb-2 font-medium">
+                {project.beforeState.visualNote[lang]}
+              </p>
+              <ul className="space-y-1 text-xs text-[#E6E6E0]">
+                {project.beforeState.metrics.map((m, idx) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-[#9EA3AA] shrink-0" />
+                    <span>{m[lang]}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Vertical Divider Handle */}
         <div
-          className="absolute top-0 bottom-0 w-1 bg-[#D6011E] pointer-events-none"
-          style={{ left: `${100 - sliderPos}%` }}
+          className="absolute top-0 bottom-0 w-1 bg-[#D6011E] pointer-events-none z-20"
+          style={{ left: `${beforePercent}%` }}
         >
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 bg-[#D6011E] text-white flex items-center justify-center shadow-md border-2 border-white">
-            <MoveHorizontal className="w-5 h-5" />
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 bg-[#D6011E] text-white flex items-center justify-center shadow-lg border-2 border-white">
+            <MoveHorizontal className="w-4 h-4" />
           </div>
         </div>
       </div>
 
-      {/* Accessible Range Input Control */}
-      <div className="mt-4 flex items-center gap-4">
-        <label
-          htmlFor={`before-after-range-${project.id}`}
-          className="text-xs font-mono-tabular uppercase text-[#42454A] shrink-0"
-        >
-          {lang === 'vi' ? 'Thanh kéo Trước / Sau:' : 'Before / After Slider:'}
-        </label>
-        <input
-          id={`before-after-range-${project.id}`}
-          type="range"
-          min={10}
-          max={90}
-          value={sliderPos}
-          onChange={(e) => setSliderPos(Number(e.target.value))}
-          className="w-full accent-[#D6011E] cursor-pointer"
-          aria-label={
-            lang === 'vi'
-              ? 'Thanh kéo so sánh trước và sau dự án'
-              : 'Before and after project comparison slider'
-          }
-        />
-        <div className="flex items-center gap-1 shrink-0">
+      {/* Accessible Range Input Control & Preset Buttons */}
+      <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 flex-1">
+          <label
+            htmlFor={`before-after-range-${project.id}`}
+            className="text-xs font-mono-tabular uppercase text-[#42454A] shrink-0 font-semibold"
+          >
+            {lang === 'vi' ? 'Thanh kéo:' : 'Slider:'}
+          </label>
+          <input
+            id={`before-after-range-${project.id}`}
+            type="range"
+            min={0}
+            max={100}
+            value={sliderPos}
+            onChange={(e) => setSliderPos(Number(e.target.value))}
+            className="w-full accent-[#D6011E] cursor-pointer"
+            aria-label={
+              lang === 'vi'
+                ? 'Thanh kéo so sánh trước và sau dự án'
+                : 'Before and after project comparison slider'
+            }
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
           <button
             type="button"
-            onClick={() => setSliderPos(15)}
-            className="px-2.5 py-1 text-xs border border-[#C8C8C0] hover:border-[#42454A] text-[#42454A]"
+            onClick={() => setSliderPos(0)}
+            className={`px-3 py-1.5 text-xs font-medium border transition-colors cursor-pointer ${
+              sliderPos <= 20
+                ? 'bg-[#42454A] text-white border-[#42454A] font-bold shadow-xs'
+                : 'bg-white border-[#C8C8C0] hover:border-[#42454A] text-[#42454A]'
+            }`}
           >
-            {lang === 'vi' ? 'Xem Trước' : 'Mostly Before'}
+            {lang === 'vi' ? 'Xem Trước' : 'View Before'}
           </button>
           <button
             type="button"
-            onClick={() => setSliderPos(85)}
-            className="px-2.5 py-1 text-xs border border-[#C8C8C0] hover:border-[#D6011E] text-[#D6011E] font-medium"
+            onClick={() => setSliderPos(50)}
+            className={`px-3 py-1.5 text-xs font-medium border transition-colors cursor-pointer ${
+              sliderPos > 20 && sliderPos < 80
+                ? 'bg-[#F7F7F5] border-[#D6011E] text-[#D6011E] font-bold shadow-xs'
+                : 'bg-white border-[#C8C8C0] hover:border-[#42454A] text-[#42454A]'
+            }`}
           >
-            {lang === 'vi' ? 'Xem Sau' : 'Mostly After'}
+            {lang === 'vi' ? 'So sánh 50/50' : '50 / 50'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setSliderPos(100)}
+            className={`px-3 py-1.5 text-xs font-medium border transition-colors cursor-pointer ${
+              sliderPos >= 80
+                ? 'bg-[#D6011E] text-white border-[#D6011E] font-bold shadow-xs'
+                : 'bg-white border-[#C8C8C0] hover:border-[#D6011E] text-[#D6011E]'
+            }`}
+          >
+            {lang === 'vi' ? 'Xem Sau' : 'View After'}
           </button>
         </div>
       </div>

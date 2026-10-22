@@ -12,10 +12,13 @@ import {
 import {
   EquipmentCutoutIllustration,
   PartnerBrandMark,
+  ProjectFieldVisual,
 } from './IndustrialVisuals';
 import {
   ArrowRight,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Download,
   FileCheck2,
   ShieldCheck,
@@ -43,6 +46,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onOpenDocsModal,
 }) => {
   const featuredProjects = PROJECTS.filter((p) => p.featured);
+  const equipmentScrollRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollEquipment = (direction: 'left' | 'right') => {
+    if (equipmentScrollRef.current) {
+      const scrollAmount = 380;
+      equipmentScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   return (
     <div>
@@ -329,44 +343,79 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* BLOCK 3: THIẾT BỊ ("Chúng tôi phục vụ thiết bị nào" - 6 cutout cards strip) */}
+      {/* BLOCK 3: THIẾT BỊ ("Chúng tôi phục vụ thiết bị nào" - Dải 6 thẻ thiết bị tách nền, cuộn ngang) */}
       <section className="py-16 bg-white border-y border-[#D8D8D2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-              <p className="text-xs font-mono-tabular uppercase tracking-wider text-[#D6011E] font-semibold">
-                {lang === 'vi'
-                  ? '02 · NĂNG LỰC THEO TỪNG DÒNG THIẾT BỊ CẢNG BIỂN'
-                  : '02 · CAPABILITIES BY PORT EQUIPMENT LINE'}
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-xs font-mono-tabular uppercase tracking-wider text-[#D6011E] font-semibold">
+                  {lang === 'vi'
+                    ? '02 · NĂNG LỰC THEO TỪNG DÒNG THIẾT BỊ CẢNG BIỂN'
+                    : '02 · CAPABILITIES BY PORT EQUIPMENT LINE'}
+                </p>
+                <span className="text-xs font-mono-tabular bg-[#42454A] text-white px-2 py-0.5 font-bold">
+                  {EQUIPMENT_LIST.length} {lang === 'vi' ? 'DÒNG THIẾT BỊ' : 'LINES'}
+                </span>
+              </div>
               <h2 className="font-display text-3xl md:text-4xl font-bold uppercase text-[#1E2022] mt-1">
                 {lang === 'vi'
                   ? 'Chúng tôi phục vụ thiết bị nào'
                   : 'Equipment Lines We Service'}
               </h2>
             </div>
-            <button
-              type="button"
-              onClick={() => onNavigatePage('equipment')}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#D6011E] hover:underline cursor-pointer whitespace-nowrap"
-            >
-              <span>
-                {lang === 'vi' ? 'Xem danh mục Thiết bị' : 'View Full Equipment Catalog'}
-              </span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+
+            <div className="flex items-center gap-3 self-end md:self-auto">
+              <button
+                type="button"
+                onClick={() => onNavigatePage('equipment')}
+                className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-[#D6011E] hover:underline cursor-pointer whitespace-nowrap mr-2"
+              >
+                <span>
+                  {lang === 'vi' ? 'Xem toàn bộ danh mục' : 'View Full Catalog'}
+                </span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              {/* Navigation Scroll Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => scrollEquipment('left')}
+                  title={lang === 'vi' ? 'Cuộn sang trái' : 'Scroll left'}
+                  aria-label={lang === 'vi' ? 'Cuộn sang trái' : 'Scroll left'}
+                  className="w-10 h-10 border border-[#D8D8D2] hover:border-[#D6011E] hover:bg-[#D6011E] hover:text-white text-[#42454A] bg-[#F7F7F5] flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollEquipment('right')}
+                  title={lang === 'vi' ? 'Cuộn sang phải' : 'Scroll right'}
+                  aria-label={lang === 'vi' ? 'Cuộn sang phải' : 'Scroll right'}
+                  className="w-10 h-10 border border-[#D8D8D2] hover:border-[#D6011E] hover:bg-[#D6011E] hover:text-white text-[#42454A] bg-[#F7F7F5] flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Dải 6 thẻ thiết bị cuộn ngang */}
+          <div
+            ref={equipmentScrollRef}
+            className="flex overflow-x-auto gap-6 pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar scroll-smooth snap-x snap-mandatory"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
             {EQUIPMENT_LIST.map((eq, index) => (
               <div
                 key={eq.id}
                 onClick={() => onSelectEquipment(eq.id)}
-                className="group bg-[#F7F7F5] border border-[#D8D8D2] hover:border-[#D6011E] transition-colors flex flex-col justify-between cursor-pointer"
+                className="w-[285px] sm:w-[325px] md:w-[360px] shrink-0 snap-start group bg-[#F7F7F5] border border-[#D8D8D2] hover:border-[#D6011E] hover:shadow-lg transition-all flex flex-col justify-between cursor-pointer"
               >
                 {/* Cutout illustration box on clean off-white canvas */}
                 <div className="relative h-48 p-4 bg-white border-b border-[#E6E6E0] flex items-center justify-center overflow-hidden">
-                  <span className="absolute top-3 left-3 font-mono-tabular text-xs font-bold text-[#42454A]">
+                  <span className="absolute top-3 left-3 font-mono-tabular text-xs font-bold text-[#42454A] bg-[#F7F7F5] px-2 py-0.5 border border-[#E6E6E0]">
                     0{index + 1} · {eq.code}
                   </span>
                   <div className="w-full h-full group-hover:scale-105 transition-transform duration-150">
@@ -430,36 +479,34 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <article
               key={project.id}
               onClick={() => onSelectProject(project.id)}
-              className="group bg-white border border-[#D8D8D2] hover:border-[#42454A] flex flex-col justify-between cursor-pointer transition-colors"
+              className="group bg-white border border-[#D8D8D2] hover:border-[#42454A] flex flex-col justify-between cursor-pointer transition-colors overflow-hidden"
             >
               <div>
-                {/* Project Visual Header with N-slash diagonal accent */}
-                <div className="relative h-48 bg-[#2C2F33] text-white p-5 flex flex-col justify-between overflow-hidden">
+                {/* Project Visual Header with Field Scene Illustration + N-slash diagonal accent */}
+                <div className="relative h-48 bg-[#2C2F33] text-white flex flex-col justify-between overflow-hidden">
+                  <ProjectFieldVisual projectId={project.id} />
                   <div
-                    className="absolute right-0 top-0 bottom-0 w-24 bg-[#D6011E]/25 pointer-events-none"
+                    className="absolute right-0 top-0 bottom-0 w-24 bg-[#D6011E]/20 pointer-events-none z-10"
                     style={{ clipPath: 'polygon(35% 0, 100% 0, 100% 100%, 0 100%)' }}
                   />
-                  <div className="relative z-10 flex items-center justify-between text-xs font-mono-tabular">
-                    <span className="text-[#E6E6E0]">
+                  <div className="relative z-20 p-4 flex items-center justify-between text-xs font-mono-tabular">
+                    <span className="bg-[#1E2022]/85 text-[#E6E6E0] px-2 py-0.5 border border-white/20 font-semibold backdrop-blur-xs">
                       0{idx + 1} · {project.countryLabel[lang].toUpperCase()}
-                    </span>
-                    <span className="text-[#D6011E] bg-white px-2 py-0.5 font-bold">
-                      {project.timeframe}
                     </span>
                   </div>
 
-                  <div className="relative z-10">
+                  <div className="relative z-20 p-4 bg-gradient-to-t from-[#1E2022]/95 via-[#1E2022]/70 to-transparent pt-6">
                     <p className="text-xs font-mono-tabular text-[#D8D8D2]">
                       {project.client[lang]} · {project.serviceTag[lang]}
                     </p>
-                    <p className="font-display text-lg font-bold uppercase text-white mt-1 line-clamp-2">
+                    <p className="font-display text-base md:text-lg font-bold uppercase text-white mt-0.5 line-clamp-1">
                       {project.equipmentUsed[lang]}
                     </p>
                   </div>
                 </div>
 
                 <div className="p-6">
-                  <div className="flex items-center gap-2 text-xs text-[#6B7078] mb-2">
+                  <div className="flex items-center gap-2 text-xs text-[#6B7078] mb-2 font-mono-tabular">
                     <span>{project.serviceTag[lang]}</span>
                     <span aria-hidden="true">·</span>
                     <span>{project.countryLabel[lang]}</span>

@@ -8,7 +8,7 @@ import {
   SERVICES,
   ServiceGroupId,
 } from '../data/navacoData';
-import { PartnerBrandMark } from './IndustrialVisuals';
+import { PartnerBrandMark, ProjectFieldVisual } from './IndustrialVisuals';
 import { QuoteRequestForm } from './QuoteRequestForm';
 import { ArrowRight, CheckCircle2, AlertTriangle, ChevronRight } from 'lucide-react';
 
@@ -104,8 +104,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
             {SERVICE_GROUPS.map((group) => {
-              const isGroupActive =
-                group.id === activeService.groupId || group.id === selectedGroupId;
+              const isGroupActive = group.id === activeGroup.id;
               return (
                 <button
                   key={group.id}
@@ -115,19 +114,28 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                     const firstSrv = SERVICES.find((s) => s.groupId === group.id);
                     if (firstSrv) onSelectService(firstSrv.id);
                   }}
-                  className={`p-3.5 text-left border transition-colors cursor-pointer ${
+                  className={`relative p-3.5 text-left border transition-all cursor-pointer ${
                     isGroupActive
-                      ? 'bg-[#42454A] text-white border-[#42454A]'
+                      ? 'bg-[#42454A] text-white border-[#42454A] shadow-sm'
                       : 'bg-[#F7F7F5] text-[#1E2022] border-[#D8D8D2] hover:border-[#42454A]'
                   }`}
                 >
+                  {isGroupActive && (
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-[#D6011E]" />
+                  )}
                   <div className="flex items-center justify-between text-xs font-mono-tabular">
-                    <span className={isGroupActive ? 'text-[#D6011E] font-bold bg-white px-1.5 py-0.5' : 'text-[#D6011E] font-bold'}>
+                    <span
+                      className={
+                        isGroupActive
+                          ? 'text-[#D6011E] font-bold bg-white px-1.5 py-0.5'
+                          : 'text-[#D6011E] font-bold'
+                      }
+                    >
                       {group.number}
                     </span>
                     <span className={isGroupActive ? 'text-[#E6E6E0]' : 'text-[#6B7078]'}>
                       {group.serviceIds.length}{' '}
-                      {lang === 'vi' ? 'dịch vụ chuyên sâu' : 'services'}
+                      {lang === 'vi' ? 'dịch vụ con' : 'services'}
                     </span>
                   </div>
                   <div className="font-display text-lg font-bold uppercase mt-1">
@@ -138,9 +146,14 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
             })}
           </div>
 
-          {/* 10 Sub-services selector pills */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#E6E6E0]">
-            {SERVICES.map((srv) => {
+          {/* Sub-services selector pills for the active category only */}
+          <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-[#E6E6E0]">
+            <span className="text-xs font-mono-tabular uppercase text-[#6B7078] mr-2">
+              {lang === 'vi'
+                ? `${activeGroup.title.vi} (${SERVICES.filter((s) => s.groupId === activeGroup.id).length}):`
+                : `${activeGroup.title.en} (${SERVICES.filter((s) => s.groupId === activeGroup.id).length}):`}
+            </span>
+            {SERVICES.filter((s) => s.groupId === activeGroup.id).map((srv) => {
               const isSelected = srv.id === activeService.id;
               return (
                 <button
@@ -149,11 +162,11 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                   onClick={() => onSelectService(srv.id)}
                   className={`px-3.5 py-2 text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
                     isSelected
-                      ? 'bg-[#D6011E] text-white font-semibold'
-                      : 'bg-[#F7F7F5] text-[#42454A] hover:bg-[#E6E6E0] hover:text-[#1E2022]'
+                      ? 'bg-[#D6011E] text-white font-bold shadow-xs'
+                      : 'bg-[#F7F7F5] text-[#42454A] border border-[#D8D8D2] hover:bg-[#E6E6E0] hover:text-[#1E2022]'
                   }`}
                 >
-                  <span className="font-mono-tabular mr-1.5">{srv.number}</span>
+                  <span className="font-mono-tabular mr-1.5 font-bold">{srv.number}</span>
                   {srv.title[lang]}
                 </button>
               );
@@ -280,31 +293,46 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
               <div
                 key={proj.id}
                 onClick={() => onSelectProject(proj.id)}
-                className="group bg-white border border-[#D8D8D2] hover:border-[#D6011E] p-6 flex flex-col justify-between cursor-pointer transition-colors"
+                className="group bg-white border border-[#D8D8D2] hover:border-[#D6011E] flex flex-col justify-between cursor-pointer transition-colors overflow-hidden"
               >
                 <div>
-                  <div className="flex items-center gap-2 text-xs font-mono-tabular text-[#6B7078] mb-2">
-                    <span className="text-[#D6011E] font-semibold">
-                      {proj.countryLabel[lang]}
-                    </span>
-                    <span>·</span>
-                    <span>{proj.client[lang]}</span>
-                    <span>·</span>
-                    <span>{proj.timeframe}</span>
+                  <div className="relative h-40 bg-[#2C2F33] overflow-hidden">
+                    <ProjectFieldVisual projectId={proj.id} />
+                    <div
+                      className="absolute right-0 top-0 bottom-0 w-20 bg-[#D6011E]/20 pointer-events-none z-10"
+                      style={{ clipPath: 'polygon(35% 0, 100% 0, 100% 100%, 0 100%)' }}
+                    />
+                    <div className="absolute top-3 left-3 z-20">
+                      <span className="bg-[#1E2022]/85 text-[#E6E6E0] px-2 py-0.5 border border-white/20 font-mono-tabular text-xs font-semibold">
+                        {proj.countryLabel[lang].toUpperCase()}
+                      </span>
+                    </div>
                   </div>
-                  <h3 className="font-display text-xl font-bold uppercase text-[#1E2022] group-hover:text-[#D6011E] transition-colors">
-                    {proj.title[lang]}
-                  </h3>
-                  <p className="text-sm text-[#42454A] mt-2 leading-relaxed">
-                    {proj.summary[lang]}
-                  </p>
+
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-xs font-mono-tabular text-[#6B7078] mb-2">
+                      <span className="text-[#D6011E] font-semibold">
+                        {proj.countryLabel[lang]}
+                      </span>
+                      <span>·</span>
+                      <span>{proj.client[lang]}</span>
+                      <span>·</span>
+                      <span>{proj.serviceTag[lang]}</span>
+                    </div>
+                    <h3 className="font-display text-xl font-bold uppercase text-[#1E2022] group-hover:text-[#D6011E] transition-colors">
+                      {proj.title[lang]}
+                    </h3>
+                    <p className="text-sm text-[#42454A] mt-2 leading-relaxed line-clamp-3">
+                      {proj.summary[lang]}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-[#E6E6E0] flex items-center justify-between text-xs font-display font-bold uppercase tracking-wider text-[#1E2022] group-hover:text-[#D6011E]">
+                <div className="px-6 py-4 bg-[#F7F7F5] border-t border-[#E6E6E0] flex items-center justify-between text-xs font-display font-bold uppercase tracking-wider text-[#1E2022] group-hover:text-[#D6011E]">
                   <span>
                     {lang === 'vi'
-                      ? 'Xem hồ sơ dự án & Thanh kéo Trước/Sau'
-                      : 'Inspect Project & Before/After Slider'}
+                      ? 'Xem hồ sơ dự án & So sánh Trước / Sau'
+                      : 'Inspect Project & Before / After Slider'}
                   </span>
                   <ArrowRight className="w-4 h-4" />
                 </div>
