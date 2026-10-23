@@ -22,6 +22,11 @@ import {
 import { ContactView, NewsView } from './components/NewsAndContactView';
 import { DocumentAnalysisModal } from './components/DocumentAnalysisModal';
 import { SearchModal } from './components/SearchModal';
+import {
+  FontSwitcher,
+  FontQuickSelectorTop,
+  DemoFontId,
+} from './components/FontSwitcher';
 import { SearchResultItem } from './utils/navacoLogic';
 import {
   ChevronDown,
@@ -75,6 +80,35 @@ export default function App() {
 
   // Submitted quotes log
   const [submittedQuotes, setSubmittedQuotes] = useState<QuoteSubmission[]>([]);
+
+  // Demo typography state (1 font unified across the entire site)
+  const [activeFont, setActiveFont] = useState<DemoFontId>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('navaco_demo_font') as DemoFontId;
+      if (
+        saved &&
+        [
+          'be-vietnam-pro',
+          'helvetica-neue',
+          'stabil-grotesk',
+          'barlow-semi-condensed',
+          'jetbrains-mono',
+        ].includes(saved)
+      ) {
+        return saved;
+      }
+    }
+    return 'be-vietnam-pro';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-font', activeFont);
+    try {
+      localStorage.setItem('navaco_demo_font', activeFont);
+    } catch {
+      // ignore
+    }
+  }, [activeFont]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -222,6 +256,19 @@ export default function App() {
               >
                 EN
               </button>
+            </div>
+
+            <span aria-hidden="true" className="text-white/30 hidden md:inline">
+              |
+            </span>
+
+            {/* Font Demo Quick Selector */}
+            <div className="hidden sm:inline-flex">
+              <FontQuickSelectorTop
+                activeFont={activeFont}
+                onSelectFont={setActiveFont}
+                lang={lang}
+              />
             </div>
           </div>
         </div>
@@ -865,6 +912,13 @@ export default function App() {
         onClose={() => setDocsModalOpen(false)}
         lang={lang}
         initialTab={docsModalTab}
+      />
+
+      {/* FLOATING DEMO FONT SWITCHER (Interactive 4-Font Typography Preview) */}
+      <FontSwitcher
+        activeFont={activeFont}
+        onSelectFont={setActiveFont}
+        lang={lang}
       />
     </div>
   );

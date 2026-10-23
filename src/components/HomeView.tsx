@@ -525,8 +525,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <div className="px-6 py-4 bg-[#F7F7F5] border-t border-[#E6E6E0] flex items-center justify-between text-xs font-display font-bold uppercase tracking-wider text-[#1E2022] group-hover:text-[#D6011E]">
                 <span>
                   {lang === 'vi'
-                    ? 'Xem chi tiết & So sánh Trước / Sau'
-                    : 'View Case Study & Before / After'}
+                    ? 'Xem chi tiết hồ sơ dự án'
+                    : 'View Case Study Details'}
                 </span>
                 <ArrowRight className="w-4 h-4" />
               </div>

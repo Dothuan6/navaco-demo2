@@ -7,7 +7,6 @@ import {
   ServiceGroupId,
 } from '../data/navacoData';
 import { filterProjects } from '../utils/navacoLogic';
-import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { QuoteRequestForm } from './QuoteRequestForm';
 import { ProjectFieldVisual } from './IndustrialVisuals';
 import {
@@ -359,9 +358,6 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
               </div>
             </div>
           </div>
-
-          {/* Interactive Before / After Comparison Slider */}
-          <BeforeAfterSlider project={activeProject} lang={lang} />
 
           {/* Other Projects */}
           <div className="pt-6 border-t border-[#E6E6E0]">

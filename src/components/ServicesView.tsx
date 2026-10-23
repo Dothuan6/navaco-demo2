@@ -331,8 +331,8 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                 <div className="px-6 py-4 bg-[#F7F7F5] border-t border-[#E6E6E0] flex items-center justify-between text-xs font-display font-bold uppercase tracking-wider text-[#1E2022] group-hover:text-[#D6011E]">
                   <span>
                     {lang === 'vi'
-                      ? 'Xem hồ sơ dự án & So sánh Trước / Sau'
-                      : 'Inspect Project & Before / After Slider'}
+                      ? 'Xem hồ sơ dự án thực tế'
+                      : 'Inspect Project Details'}
                   </span>
                   <ArrowRight className="w-4 h-4" />
                 </div>

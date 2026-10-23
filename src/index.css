@@ -1,43 +1,148 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --navaco-red: #D6011E;
-    --navaco-red-dark: #B00018;
-    --navaco-graphite: #42454A;
-    --navaco-graphite-dark: #2C2F33;
-    --navaco-bg: #F7F7F5;
-    --font-display: 'Barlow Semi Condensed', sans-serif;
-    --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-  }
+/* ==========================================================================
+   HELVETICA NEUE LOCAL FONTS (From Brand Guideline NAVACO)
+   ========================================================================== */
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/fonts/helveticaneue.woff2') format('woff2'),
+       url('/fonts/helveticaneue.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/fonts/helveticaneuemedium.woff2') format('woff2'),
+       url('/fonts/helveticaneuemedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/fonts/helveticaneuebold.woff2') format('woff2'),
+       url('/fonts/helveticaneuebold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: url('/fonts/helveticaneuecondensedblack.woff2') format('woff2'),
+       url('/fonts/helveticaneuecondensedblack.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   STABIL GROTESK (Local, Webfont & Grotesque Fallback)
+   ========================================================================== */
+@font-face {
+  font-family: 'Stabil Grotesk';
+  src: local('Stabil Grotesk'),
+       local('StabilGrotesk'),
+       local('StabilGrotesk-Regular'),
+       url('/fonts/StabilGrotesk.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Stabil Grotesk';
+  src: local('Stabil Grotesk Medium'),
+       local('StabilGrotesk-Medium'),
+       url('/fonts/StabilGrotesk-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Stabil Grotesk';
+  src: local('Stabil Grotesk Bold'),
+       local('StabilGrotesk-Bold'),
+       url('/fonts/StabilGrotesk-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   ROOT VARIABLES & UNIFIED DEMO FONT SYSTEM
+   ========================================================================== */
+:root {
+  --navaco-red: #D6011E;
+  --navaco-red-dark: #B00018;
+  --navaco-graphite: #42454A;
+  --navaco-graphite-dark: #2C2F33;
+  --navaco-bg: #F7F7F5;
+
+  /* Default unified active font */
+  --navaco-font-active: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --font-display: var(--navaco-font-active);
+  --font-sans: var(--navaco-font-active);
+  --font-mono: var(--navaco-font-active);
+}
+
+/* Font theme selectors */
+[data-font="be-vietnam-pro"] {
+  --navaco-font-active: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+}
+
+[data-font="jetbrains-mono"] {
+  --navaco-font-active: 'JetBrains Mono', monospace;
+}
+
+[data-font="helvetica-neue"] {
+  --navaco-font-active: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+[data-font="barlow-semi-condensed"] {
+  --navaco-font-active: 'Barlow Semi Condensed', sans-serif;
+}
+
+[data-font="stabil-grotesk"] {
+  --navaco-font-active: 'Stabil Grotesk', 'Space Grotesk', 'Schibsted Grotesk', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
   body {
-    font-family: var(--font-sans);
+    font-family: var(--navaco-font-active) !important;
     font-size: 16px;
     line-height: 1.6;
     background-color: #F7F7F5;
     color: #1E2022;
   }
 
-  h1, h2, h3, .font-display {
-    font-family: var(--font-display);
+  /* 1. Đồng bộ toàn bộ tiêu đề & nội dung thành 1 font chữ duy nhất */
+  h1, h2, h3, h4, h5, h6,
+  p, span, a, button, input, textarea, select, label,
+  .font-display,
+  .font-sans,
+  .font-mono-tabular {
+    font-family: var(--navaco-font-active) !important;
   }
 }
 
-.font-display {
-  font-family: 'Barlow Semi Condensed', sans-serif;
-}
-
-.font-sans {
-  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+.font-display,
+.font-sans,
+.font-mono-tabular {
+  font-family: var(--navaco-font-active) !important;
 }
 
 .font-mono-tabular {
-  font-family: 'JetBrains Mono', monospace;
   font-variant-numeric: tabular-nums;
 }
 
+/* ==========================================================================
+   BRAND STYLING MOTIFS
+   ========================================================================== */
 /* N-slash Diagonal Motif from NAVACO Logo */
 .navaco-slash-right {
   clip-path: polygon(0 0, 100% 0, 94% 100%, 0% 100%);

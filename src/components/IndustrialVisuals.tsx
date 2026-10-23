@@ -329,10 +329,6 @@ export const ProjectFieldVisual: React.FC<{
               <rect x="4" y="20" width="5" height="8" fill="#1E2022" />
             </g>
           </g>
-          {/* Signature NAVACO Diagonal N-slash Tag */}
-          <polygon points="410,0 480,0 480,65 440,65" fill="#D6011E" opacity="0.85" />
-          <text x="445" y="32" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontFamily="monospace" fontWeight="bold">PAS</text>
-          <text x="445" y="44" textAnchor="middle" fill="#E6E6E0" fontSize="7" fontFamily="monospace">RTG OVERHAUL</text>
         </svg>
       );
 
@@ -408,10 +404,6 @@ export const ProjectFieldVisual: React.FC<{
             <rect x="19" y="22" width="6" height="12" fill="#1E2022" />
             <rect x="10" y="14" width="10" height="7" fill="#E6E6E0" stroke="#42454A" strokeWidth="0.8" />
           </g>
-          {/* Corner Badge */}
-          <polygon points="410,0 480,0 480,65 440,65" fill="#D6011E" opacity="0.85" />
-          <text x="445" y="32" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontFamily="monospace" fontWeight="bold">PPAP</text>
-          <text x="445" y="44" textAnchor="middle" fill="#E6E6E0" fontSize="7" fontFamily="monospace">KALMAR</text>
         </svg>
       );
 
@@ -484,10 +476,6 @@ export const ProjectFieldVisual: React.FC<{
             {/* Tablet */}
             <rect x="12" y="14" width="8" height="10" fill="#009999" stroke="#FFFFFF" strokeWidth="0.8" />
           </g>
-          {/* Corner Badge */}
-          <polygon points="410,0 480,0 480,65 440,65" fill="#D6011E" opacity="0.85" />
-          <text x="445" y="32" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontFamily="monospace" fontWeight="bold">CMIT</text>
-          <text x="445" y="44" textAnchor="middle" fill="#E6E6E0" fontSize="7" fontFamily="monospace">CÁI MÉP</text>
         </svg>
       );
 
@@ -555,10 +543,6 @@ export const ProjectFieldVisual: React.FC<{
             <rect x="30" y="22" width="24" height="24" fill="#42454A" stroke="#E2E2DC" strokeWidth="1" />
             <circle cx="42" cy="34" r="5" fill="#009999" />
           </g>
-          {/* Corner Badge */}
-          <polygon points="410,0 480,0 480,65 440,65" fill="#D6011E" opacity="0.85" />
-          <text x="445" y="32" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontFamily="monospace" fontWeight="bold">STOLL</text>
-          <text x="445" y="44" textAnchor="middle" fill="#E6E6E0" fontSize="7" fontFamily="monospace">POWER</text>
         </svg>
       );
 
@@ -616,10 +600,6 @@ export const ProjectFieldVisual: React.FC<{
             <rect x="4" y="9" width="8" height="15" fill="#D6011E" />
             <rect x="4" y="24" width="8" height="15" fill="#1E2022" />
           </g>
-          {/* Corner Badge */}
-          <polygon points="410,0 480,0 480,65 440,65" fill="#D6011E" opacity="0.85" />
-          <text x="445" y="32" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontFamily="monospace" fontWeight="bold">TÂN</text>
-          <text x="445" y="44" textAnchor="middle" fill="#E6E6E0" fontSize="7" fontFamily="monospace">THUẬN</text>
         </svg>
       );
 
@@ -684,10 +664,6 @@ export const ProjectFieldVisual: React.FC<{
             <circle cx="20" cy="30" r="7" fill="#151719" />
             <circle cx="42" cy="30" r="7" fill="#151719" />
           </g>
-          {/* Corner Badge */}
-          <polygon points="410,0 480,0 480,65 440,65" fill="#D6011E" opacity="0.85" />
-          <text x="445" y="32" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontFamily="monospace" fontWeight="bold">TIÊN SA</text>
-          <text x="445" y="44" textAnchor="middle" fill="#E6E6E0" fontSize="7" fontFamily="monospace">RENTAL</text>
         </svg>
       );
   }

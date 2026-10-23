@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- NAVACO Brand Red Squircle Background -->
+  <rect width="128" height="128" rx="28" fill="#D6011E"/>
+
+  <!-- NAVACO Stylized "N" Ribbon Symbol in Pure White -->
+  <g transform="translate(14, 30)">
+    <!-- Left Ribbon -->
+    <path
+      d="M4 64L30 12C32.5 7 36.5 5 42 5H53C57.5 5 60.5 7.5 63 12L73 30L63.5 44L50 20C49 18.2 47.8 18.2 46.8 20L24 64H4Z"
+      fill="#FFFFFF"
+    />
+    <!-- Right Ribbon -->
+    <path
+      d="M96 5L70 57C67.5 62 63.5 64 58 64H47C42.5 64 39.5 61.5 37 57L27 39L36.5 25L50 49C51 50.8 52.2 50.8 53.2 49L76 5H96Z"
+      fill="#FFFFFF"
+    />
+  </g>
+</svg>
