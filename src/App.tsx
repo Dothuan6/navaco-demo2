@@ -24,7 +24,6 @@ import { DocumentAnalysisModal } from './components/DocumentAnalysisModal';
 import { SearchModal } from './components/SearchModal';
 import {
   FontSwitcher,
-  FontQuickSelectorTop,
   DemoFontId,
 } from './components/FontSwitcher';
 import { SearchResultItem } from './utils/navacoLogic';
@@ -256,19 +255,6 @@ export default function App() {
               >
                 EN
               </button>
-            </div>
-
-            <span aria-hidden="true" className="text-white/30 hidden md:inline">
-              |
-            </span>
-
-            {/* Font Demo Quick Selector */}
-            <div className="hidden sm:inline-flex">
-              <FontQuickSelectorTop
-                activeFont={activeFont}
-                onSelectFont={setActiveFont}
-                lang={lang}
-              />
             </div>
           </div>
         </div>
